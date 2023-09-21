@@ -89,7 +89,9 @@
             height: 100vh;
             background: #f00;
         }
-        .sky-gradient-12 { background: url("bg.svg"); 
+        .backdrop { 
+            background: url("bg2.svg"), linear-gradient(to bottom, #90dffe 0%, #38a3d1 100%); 
+            background-blend-mode: normal;
             background-size: cover;
             background-repeat: no-repeat;
         }
@@ -123,11 +125,16 @@
             top: 0px;
             padding: 1rem;
         }
+        .sky {
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-position: bottom center;
+        }
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" integrity="sha512-fD9DI5bZwQxOi7MhYWnnNPlvXdp/2Pj3XSTRrFs5FQa4mizyGLnJcN6tuvUS6LbmgN1ut+XGSABKvjN0H6Aoow==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="explode.js"></script>
 </head>
-<body class="sky-gradient-12">
+<body class="sky sky-gradient-19">
 <canvas id="confetti" height="100%" width="100%">You can't have any</canvas>
 <main>
 </main>
@@ -158,16 +165,21 @@ class Bee {
         if (x && y) {
             this.x = x;
             this.y = y;
+            this.z = 0.5;
         } else {
             this.x = Math.floor(Math.random() * window.innerWidth);
             this.y = Math.floor(Math.random() * window.innerHeight);
+            this.z = Math.random();
         }
 
         this.bee.style.top = this.y + 'px';
         this.bee.style.left = this.x + 'px';
-        
+        this.bee.style.transform = `scale(${this.z})`;
+        this.bee.style.filter = `blur(${6 - (this.z * 6 )}px)`;
+
         this.vx = ((Math.random() * 60) - 30) * 2;
         this.vy = ((Math.random() * 60) - 30) * 2;
+        this.vz = (Math.random() - 0.5) / 10;
 
         if (this.vx < 0) {
             this.bee.classList.add("bee0");
@@ -179,7 +191,8 @@ class Bee {
     fly() {
         this.x += this.vx;
         this.y += this.vy;
-        
+        this.z += this.vz;
+
         if (Math.random() < 0.01) {
             this.vx = ((Math.random() * 60) - 30) * 2;
             this.bee.classList.remove('bee0');
@@ -188,6 +201,10 @@ class Bee {
         if (Math.random() > 0.9) {
             this.vy = ((Math.random() * 60) - 30) * 2;
         }
+        
+        if (Math.random() > 0.9) {
+            this.vz = (Math.random() - 0.5) / 10;
+        }
 
         if (this.x > window.innerWidth - this.w) { this.x -= this.w; this.vx *= -1; this.bee.classList.toggle('bee0'); }
         if (this.x < 0) { this.x += this.w; this.vx *= -1; this.bee.classList.toggle('bee0'); }
@@ -195,12 +212,17 @@ class Bee {
         if (this.y > window.innerHeight - (this.h / 2)) { this.y -= this.h; this.vy *= -1; }
         if (this.y < 0) { this.vy *= -1; }
 
+        if ((this.z > 1) || (this.z < -1)) { this.vz *= -1; }
 //        this.vx = (Math.random() * 6) - 3;
 //        this.vy = (Math.random() * 6) - 3;
 
         this.bee.style.top = this.y + 'px';
         this.bee.style.left = this.x + 'px';
-        setTimeout(this.fly.bind(this), 100);
+
+        let scale = Math.abs(this.z + 0.25);
+        let scaleX = (this.vx < 0) ? -scale : scale;
+        this.bee.style.transform = `scale(${scaleX}, ${scale})`;
+        window.requestAnimationFrame(this.fly.bind(this));
     }
 }
 
@@ -216,6 +238,8 @@ class Bee {
         },
         bees: [],
         init: function() {
+            let now = new Date();
+            $("body").className = `sky sky-gradient-${now.getHours()}`;
             app.bees[0] = $(".bee");
             document.addEventListener("click", function(e) {
                 $("#target").style.top = e.y + 'px';
@@ -226,6 +250,7 @@ class Bee {
                 
                 setTimeout(function() { $("#target").style.display = "none"; $("#target").style.opacity = 1; }, 300);
                 
+                console.dir(e);
                 app.hive.forEach(bee=>{
                     if (((e.x > bee.x) && (e.x < (bee.x + 240))) && 
                         ((e.y > bee.y) && (e.y < (bee.y + 240)))) {
@@ -252,7 +277,7 @@ class Bee {
             app.state.accuracy = (~~((app.state.kills / app.state.shots) * 100));
             $("#kills").innerHTML = app.state.kills;
             $("#shots").innerHTML = app.state.shots;
-            $("#accuracy").innerHTML = app.state.accuracy;
+            $("#accuracy").innerHTML = app.state.accuracy + '%';
         },
         fetch: function(url, callback) {
             fetch(url).then(response=>response.json()).then(data=>{

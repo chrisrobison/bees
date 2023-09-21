@@ -37,6 +37,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
+            background-blend-mode: darken;
         }
 
         footer {
@@ -94,6 +95,7 @@
             background-blend-mode: normal;
             background-size: cover;
             background-repeat: no-repeat;
+            opacity: 0.75;
         }
 
         #target {
@@ -239,7 +241,7 @@ class Bee {
         bees: [],
         init: function() {
             let now = new Date();
-            $("body").className = `sky sky-gradient-${now.getHours()}`;
+            $("main").className = `sky sky-gradient-${now.getHours()}`;
             app.bees[0] = $(".bee");
             document.addEventListener("click", function(e) {
                 $("#target").style.top = e.y + 'px';

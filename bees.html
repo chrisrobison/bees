@@ -22,6 +22,9 @@
             background-color:#000;
             background-repeat: no-repeat;
             background-size: 100vw 100vh;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
         }
 
         header {
@@ -196,15 +199,15 @@ class Bee {
         this.z += this.vz;
 
         if (Math.random() < 0.01) {
-            this.vx = ((Math.random() * 60) - 30) * 2;
+            this.vx = ((Math.random() * 40) - 20) ;
             this.bee.classList.remove('bee0');
             if (this.vx < 0) this.bee.classList.add('bee0');
         }
-        if (Math.random() > 0.9) {
-            this.vy = ((Math.random() * 60) - 30) * 2;
+        if (Math.random() > 0.95) {
+            this.vy = ((Math.random() * 40) - 20) ;
         }
         
-        if (Math.random() > 0.9) {
+        if (Math.random() > 0.95) {
             this.vz = (Math.random() - 0.5) / 10;
         }
 
@@ -241,7 +244,7 @@ class Bee {
         bees: [],
         init: function() {
             let now = new Date();
-            $("main").className = `sky sky-gradient-${now.getHours()}`;
+            $("body").className = `sky sky-gradient-${now.getHours()}`;
             app.bees[0] = $(".bee");
             document.addEventListener("click", function(e) {
                 $("#target").style.top = e.y + 'px';

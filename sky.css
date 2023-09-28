@@ -1,23 +1,23 @@
 .sky-gradient-00 .cloud-circle { opacity:.3; }
-.sky-gradient-00, .sky-gradient-24 { background-image: #00000c; }
+.sky-gradient-00, .sky-gradient-24 { url("bg3.svg"), background-image: #00000c; }
 
 .sky-gradient-01 .cloud-circle { opacity:.35; }
-.sky-gradient-01 { background-image: url("bg2.svg"), linear-gradient(to bottom, #020111 85%, #191621 100%); }
+.sky-gradient-01 { background-image: url("bg3.svg"), linear-gradient(to bottom, #020111 85%, #191621 100%); }
 
 .sky-gradient-02 .cloud-circle { opacity:.4; }
-.sky-gradient-02 { background-image: url("bg2.svg"), linear-gradient(to bottom, #020111 60%, #20202c 100%); }
+.sky-gradient-02 { background-image: url("bg3.svg"), linear-gradient(to bottom, #020111 60%, #20202c 100%); }
 
 .sky-gradient-03 .cloud-circle { opacity:.45; }
-.sky-gradient-03 { background-image: url("bg2.svg"), linear-gradient(to bottom, #020111 10%, #3a3a52 100%); }
+.sky-gradient-03 { background-image: url("bg3.svg"), linear-gradient(to bottom, #020111 10%, #3a3a52 100%); }
 
 .sky-gradient-04 .cloud-circle { opacity:.5; }
-.sky-gradient-04 { background-image: url("bg2.svg"), linear-gradient(to bottom, #20202c 0%, #515175 100%); }
+.sky-gradient-04 { background-image: url("bg3.svg"), linear-gradient(to bottom, #20202c 0%, #515175 100%); }
 
 .sky-gradient-05 .cloud-circle { opacity:.55; }
-.sky-gradient-05 { background-image: url("bg2.svg"), linear-gradient(to bottom, #40405c 0%, #6f71aa 80%, #8a76ab 100%); }
+.sky-gradient-05 { background-image: url("bg3.svg"), linear-gradient(to bottom, #40405c 0%, #6f71aa 80%, #8a76ab 100%); }
 
 .sky-gradient-06 .cloud-circle { opacity:.6; }
-.sky-gradient-06 { background-image: url("bg2.svg"), linear-gradient(to bottom, #4a4969 0%, #7072ab 50%, #cd82a0 100%); }
+.sky-gradient-06 { background-image: url("bg3.svg"), linear-gradient(to bottom, #4a4969 0%, #7072ab 50%, #cd82a0 100%); }
 
 .sky-gradient-07 .cloud-circle { opacity:.65; }
 .sky-gradient-07 { background-image: url("bg2.svg"), linear-gradient(to bottom, #757abf 0%, #8583be 60%, #eab0d1 100%); }
@@ -56,16 +56,16 @@
 .sky-gradient-18 { background-image: url("bg2.svg"), linear-gradient(to bottom, #154277 0%, #576e71 30%, #e1c45e 70%, #b26339 100%); }
 
 .sky-gradient-19 .cloud-circle { opacity:.55; }
-.sky-gradient-19 { background-image: url("bg2.svg"), linear-gradient(to bottom, #163C52 0%, #4F4F47 30%, #C5752D 60%, #B7490F 80%, #2F1107 100%); }
+.sky-gradient-19 { background-image: url("bg3.svg"), linear-gradient(to bottom, #163C52 0%, #4F4F47 30%, #C5752D 60%, #B7490F 80%, #2F1107 100%); }
 
 .sky-gradient-20 .cloud-circle { opacity:.5; }
-.sky-gradient-20 { background-image: url("bg2.svg"), linear-gradient(to bottom, #071B26 0%, #071B26 30%, #8A3B12 80%, #240E03 100%); }
+.sky-gradient-20 { background-image: url("bg3.svg"), linear-gradient(to bottom, #071B26 0%, #071B26 30%, #8A3B12 80%, #240E03 100%); }
 
 .sky-gradient-21 .cloud-circle { opacity:.45; }
-.sky-gradient-21 { background-image: url("bg2.svg"), linear-gradient(to bottom, #010A10 30%, #59230B 80%, #2F1107 100%); }
+.sky-gradient-21 { background-image: url("bg3.svg"), linear-gradient(to bottom, #010A10 30%, #59230B 80%, #2F1107 100%); }
 
 .sky-gradient-22 .cloud-circle { opacity:.4; }
-.sky-gradient-22 { background-image: url("bg2.svg"), linear-gradient(to bottom, #090401 50%, #4B1D06 100%); }
+.sky-gradient-22 { background-image: url("bg3.svg"), linear-gradient(to bottom, #090401 50%, #4B1D06 100%); }
 
 .sky-gradient-23 .cloud-circle { opacity:.35; }
-.sky-gradient-23 { background-image: url("bg2.svg"), linear-gradient(to bottom, #00000c 80%, #150800 100%); }
+.sky-gradient-23 { background-image: url("bg3.svg"), linear-gradient(to bottom, #00000c 80%, #150800 100%); }

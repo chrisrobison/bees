@@ -256,6 +256,7 @@ class Bee {
                 setTimeout(function() { $("#target").style.display = "none"; $("#target").style.opacity = 1; }, 300);
                 
                 console.dir(e);
+                let gotone = 0;
                 app.hive.forEach(bee=>{
                     if (((e.x > bee.x) && (e.x < (bee.x + 240))) && 
                         ((e.y > bee.y) && (e.y < (bee.y + 240)))) {
@@ -264,12 +265,15 @@ class Bee {
 
                             bee.bee.parentElement?.removeChild(bee.bee);
                             addConfetti({x: e.x, y: e.y, color: "yellow" });
-                            setTimeout(function() {
-                                let tmpbee = new Bee(~~(Math.random()*1600), ~~(Math.random() * 800));
-                                app.hive.push(bee);
-                            }, ~~(Math.random() * 10000));
+                            gotone = 1;
                     }
                 });
+                if (!gotone) {
+                    setTimeout(function() {
+                        let tmpbee = new Bee(~~(Math.random()*1600), ~~(Math.random() * 800));
+                        app.hive.push(tmpbee);
+                    }, ~~(Math.random() * 10000));
+                }
                 console.dir(e);
                 // let bee = new Bee(e.x, e.y);
                 app.updateScore();

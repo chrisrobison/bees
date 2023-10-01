@@ -180,7 +180,12 @@ class Bee {
         this.bee.style.top = this.y + 'px';
         this.bee.style.left = this.x + 'px';
         this.bee.style.transform = `scale(${this.z})`;
-        this.bee.style.filter = `blur(${6 - (this.z * 6 )}px)`;
+        
+        let filter = `blur(${6 - (this.z * 6 )}px)`;
+        if ((app.now.getHours() > 20) || ((app.now.getHours() > 0) && (app.now.getHours() < 5))) {
+            filter += ` grayscale(0.7) brightness(0.3)`;
+        }
+        this.bee.style.filter = filter;
 
         this.vx = ((Math.random() * 60) - 30) * 2;
         this.vy = ((Math.random() * 60) - 30) * 2;
@@ -227,7 +232,6 @@ class Bee {
         let scale = Math.abs(this.z + 0.25);
         let scaleX = (this.vx < 0) ? -scale : scale;
         this.bee.style.transform = `scale(${scaleX}, ${scale})`;
-        window.requestAnimationFrame(this.fly.bind(this));
     }
 }
 
@@ -239,13 +243,16 @@ class Bee {
             loaded: false,
             kills: 0,
             shots: 0,
-            accuracy: 100
+            accuracy: 100,
+            paused: 0
         },
         bees: [],
         init: function() {
             let now = new Date();
+            app.now = now;
             $("body").className = `sky sky-gradient-${now.getHours()}`;
             app.bees[0] = $(".bee");
+            document.addEventListener("keypress", app.doKey);
             document.addEventListener("click", function(e) {
                 $("#target").style.top = e.y + 'px';
                 $("#target").style.left = e.x + 'px';
@@ -281,6 +288,26 @@ class Bee {
             });
             app.state.loaded = true;
             app.newBee(10);
+            app.eventloop();
+        },
+        eventloop: function() {
+            if (!app.state.paused) {
+                for (const bee of app.hive) {
+                    bee.fly();
+                }
+
+                window.requestAnimationFrame(app.eventloop);
+            }
+        },
+        doKey: function(e) {
+            console.log("doKey");
+            console.dir(e);
+            switch (e.key) {
+                case "p":
+                    app.state.paused ^= 1;
+                    if (!app.state.paused) app.eventloop();
+                    break;
+            }
         },
         updateScore() {
             app.state.accuracy = (~~((app.state.kills / app.state.shots) * 100));

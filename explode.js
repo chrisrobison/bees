@@ -63,7 +63,7 @@ const confettiParams = {
     // how wide is explosion
     drag: 0.008,
     // how slow particles are falling
-    terminalVelocity: 200,
+    terminalVelocity: 7,
     // how fast particles are rotating around themselves
     flipSpeed: 0.027,
     victimWidth: 240,
@@ -160,11 +160,11 @@ function setupCanvas() {
 //    POP.confetti.style.height = POP.currentHeight + 'px';
 
     
-    $("#confetti").height = window.innerHeight;
-    $("#confetti").width = window.innerWidth;
+    document.querySelector("#confetti").height = window.innerHeight;
+    document.querySelector("#confetti").width = window.innerWidth;
 
-    $("#confetti").style.height = window.innerHeight + 'px';
-    $("#confetti").style.width = window.innerWidth + 'px';
+    document.querySelector("#confetti").style.height = window.innerHeight + 'px';
+    document.querySelector("#confetti").style.width = window.innerWidth + 'px';
 
     const box = document.querySelector("#confetti").getBoundingClientRect();
 

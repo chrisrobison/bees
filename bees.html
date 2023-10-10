@@ -151,6 +151,48 @@
             transition: all 500ms linear;
             animation: show 5s linear;
         }
+        #health-meter {
+            position: absolute;
+            height: 70vh;
+            width: 20px;
+            border: 1px solid #fff;
+            background-color: #000;
+            display:flex;
+            flex-direction: column;
+            align-items:center;
+            justify-content: flex-end;
+            text-align: center;
+            font-size: 10px;
+            right: 50px;
+            bottom: 50px;
+        }
+        #health-meter:before {
+            content: "Health";
+            position: absolute;
+            display: inline-block;
+            color: #fff;
+            background-color: #0009;
+            height: 1rem;
+            width: 5rem;
+            top: -1.4rem;
+        }
+        #health {
+            display: inline-block;
+            position: absolute;
+            height: 100%;
+            width: 16px;
+            background-color: #c00;
+        }
+        .epipen {
+            display: inline-block;
+            position: absolute;
+            background-image: url("balloon.png");
+            background-size: contain;
+            height: 465px;
+            width: 200px;
+            background-repeat: no-repeat;
+        }
+
         @keyframes show {
             0% { background-color: #0000; font-size: 8px; }
             10% { background-color: #0009; font-size: 72px; }
@@ -172,10 +214,53 @@
     <div><label>Accuracy: </label> <span id="accuracy">0</span></div>
 
 </div>
+<div id="health-meter">
+    <div id="health"></div>
+</div>
 <div id="levelOverlay"></div>
 <script>
 const $ = str => document.querySelector(str);
 const $$ = str => document.querySelectorAll(str);
+
+class Epipen {
+    _self = this;
+    x = window.innerWidth / 2;
+    y = window.innerHeight;
+    vx = 0;
+    vy = -3;
+    h = 465;
+    w = 200;
+    el = document.createElement('div');
+    bx = 0;
+    scale = 1;
+
+    constructor() {
+        this.el.className = 'epipen';
+        this.x = Math.floor(Math.random() * (window.innerWidth - this.w)) + this.w;
+        this.bx = this.x;
+        this.y = window.innerHeight;
+        this.vy = -3;
+        this.scale = (Math.floor(Math.random() * 50) + 50) / 100;
+
+        this.el.style.top = this.y + 'px';
+        this.el.style.left = this.x + 'px';
+        this.el.style.width = (this.w * this.scale) + 'px';
+        this.el.style.height = (this.h * this.scale) + 'px';
+
+        $("main").append(this.el);
+    }
+    fly() {
+        this.x = (Math.sin(this.y / 30) * 20) + this.bx; // this.vx;
+        this.y += this.vy;
+
+        if (this.y < -this.h) {
+            $("main").removeChild(app.epipen.el);
+            delete(app.epipen);
+        }
+        this.el.style.top = this.y + 'px';
+        this.el.style.left = this.x + 'px';
+    }
+ }
 
 class Bee {
     x = 500;
@@ -184,12 +269,15 @@ class Bee {
     vy = -3;
     h = 240;
     w = 240;
+    stings = 0;
+    alive = 1;
     bee = document.createElement('div');
     _self = this;
 
     constructor(x, y) {
         this.bee.className = 'bee';
-        
+        this.alive = 1;
+
         if (x && y) {
             this.x = x;
             this.y = y;
@@ -222,41 +310,82 @@ class Bee {
     }
     
     fly() {
+        // First increment our positions with our velocities
         this.x += this.vx;
         this.y += this.vy;
         this.z += this.vz;
 
+        // Randomly add some randomness to directions and velocities.
+        //
+        // First handle horizontal 
         if (Math.random() < (0.01 + (app.state.level * 0.01))) {
             this.vx = ((Math.random() * (10 * app.state.level)) - (5 * app.state.level)) ;
             this.bee.classList.remove('bee0');
             if (this.vx < 0) this.bee.classList.add('bee0');
         }
+
+        // Vertical
         if (Math.random() > (0.99 - (app.state.level *  0.05))) {
             this.vy = ((Math.random() * (20 * app.state.level)) - (10 * app.state.level)) ;
         }
         
+        // and distance (z-axis)
         if (Math.random() > (0.99 - (app.state.level * 0.03))) {
             this.vz = (Math.random() - 0.5) / 10;
         }
 
+        // Handle edge cases ;-)
+
+        // Object is out-of-bounds on right side (minus width of bee 
+        // (240 should actually reference this.width but it makes bees not clickable))
         if (this.x > window.innerWidth - 240) { this.x -= this.w; this.vx *= -1; this.bee.classList.toggle('bee0'); }
+        // Bee is off the left side 
         if (this.x < 0 + 120) { this.x += this.w; this.vx *= -1; this.bee.classList.toggle('bee0'); }
 
+        // Bee is beyond bottom
         if (this.y > window.innerHeight - (this.h / 2)) { this.y -= this.h * 2; this.vy *= -1; }
+
+        // Bee is higher than top
         if (this.y < 0 + 240) { this.vy *= -1; }
 
-        if ((this.z > 1) || (this.z < -1)) { this.vz *= -1; }
-//        this.vx = (Math.random() * 6) - 3;
-//        this.vy = (Math.random() * 6) - 3;
+        // If bee is too close, decrease health
+        if ((this.z > 1.0) && (this.stings < 6)) {
+            app.sting();
+            this.stings++;
+        }
 
+        if (this.z > 1.0) {
+            this.z -= this.vz;
+            this.vz *= -1;
+        }
+        
+        if (this.stings > 5) {
+            this.alive = 0;
+            this.bee.parentElement?.removeChild(this.bee);
+            addConfetti({x: this.x, y: this.y, color: "red" });
+            let idx = app.hive.findIndex((item) => { return item.bee === this.bee });
+            if (idx) {
+                app.hive.splice(idx, 1);
+            }
+
+            app.hive.push(new Bee());
+        }
+        // Reverse z velocity if too far away
+        if (this.z < -1) { this.vz *= -1; }
+
+        // Set new values to our element
         this.bee.style.top = this.y + 'px';
         this.bee.style.left = this.x + 'px';
 
+        // Scale accordingly
         let scale = Math.abs(this.z + 0.25);
         let scaleX = (this.vx < 0) ? -scale : scale;
         this.w = 240 * scale;
         this.h = 240 * scale;
         this.bee.style.transform = `scale(${scaleX}, ${scale})`;
+    }
+    destroy() {
+        
     }
 }
 
@@ -266,6 +395,7 @@ class Bee {
         data: {},
         state: {
             level: 0,
+            health: 100,
             loaded: false,
             kills: 0,
             shots: 0,
@@ -294,6 +424,15 @@ class Bee {
             
             setTimeout(function() { $("#target").style.display = "none"; $("#target").style.opacity = 1; }, 300);
             
+            if (app.epipen) {
+                if (((e.x > app.epipen.x) && (e.x < (app.epipen.x + app.epipen.w))) && 
+                    ((e.y > app.epipen.y) && (e.y < (app.epipen.y + app.epipen.h)))) {
+                        app.healthBonus(10);
+                        addConfetti({x: e.x, y: e.y, color: "red" });
+                        $("main").removeChild(app.epipen.el);
+                        delete(app.epipen);
+                }
+            }
             console.dir(e);
             let gotone = 0;
             for (let i=0; i<app.hive.length; i++) {
@@ -314,14 +453,11 @@ class Bee {
                 app.hive.push(tmpbee);
                 app.updateScore();
             }
-            console.dir(e);
-            // let bee = new Bee(e.x, e.y);
 
             if (app.hive.length === 0) {
                 app.nextLevel();
             }
             app.updateScore();
-            // app.hive.push(bee);
         },
         nextLevel: function() {
             app.state.level++;
@@ -329,17 +465,26 @@ class Bee {
             $("#levelOverlay").style.display = "flex";
             
             setTimeout(function() {
-                app.newBee(3 + (4 * app.state.level));
+                app.newBee(3 + (3 * app.state.level));
                 $("#levelOverlay").style.display = "none";
                 app.updateScore();
             }, 5000);
         },
+        sting: function() {
+            app.state.health -= 1;
+            $("#health").style.height = `${app.state.health}%`;
+        },
         eventloop: function() {
             if (!app.state.paused) {
                 for (const bee of app.hive) {
-                    bee.fly();
+                    if (bee.alive) bee.fly();
                 }
-
+                if (app.epipen) {
+                    app.epipen.fly();
+                }
+                if (!app.epipen && (Math.floor(Math.random() * 5000) < 10)) {
+                    app.epipen = new Epipen();
+                }
                 window.requestAnimationFrame(app.eventloop);
             }
         },
@@ -378,6 +523,11 @@ class Bee {
         },
         moveMouse: function(e) {
             app.bees.forEach(bee=>{ bee.style.left = e.x + 'px'; bee.style.top = e.y + 'px'; });
+        },
+        healthBonus: function(amt) {
+            app.state.health += amt;
+            if (app.state.health > 100) app.state.health = 100;
+            $("#health").style.height = app.state.health + '%';
         },
         display: function(data, tgt) {
             let out = "<table><thead><tr>";

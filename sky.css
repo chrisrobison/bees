@@ -1,5 +1,5 @@
 .sky-gradient-0 .cloud-circle { opacity:.3; }
-.sky-gradient-0, .sky-gradient-24 { url("bg4.svg"), background-image: #00000c; }
+.sky-gradient-0, .sky-gradient-24 { background-image: url("bg4.svg"); background-color: #00000c; }
 
 .sky-gradient-1 .cloud-circle { opacity:.35; }
 .sky-gradient-1 { background-image: url("bg4.svg"), linear-gradient(to bottom, #020111 85%, #191621 100%); }

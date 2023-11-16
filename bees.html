@@ -307,7 +307,7 @@
     <div id="health"></div>
 </div>
 <div id="levelOverlay"></div>
-<div id="gameOverOverlay"><div id="gameOver">Game Over</div><h2><a href="./">New Game</a></h2></div>
+<div id="gameOverOverlay"><div id="gameOver">Game Over</div><h2><a href="#" onclick="app.begin(); return false">New Game</a></h2></div>
 <div id="gameIntroOverlay">
     <div class="dialog">
         <h1 id="gameIntro">The Bees</h1>
@@ -551,12 +551,21 @@ class Bee {
             app.state.loaded = true;
         },
         begin(evt) {
+            app.state.level = 0;
+            app.state.health = 100;
+            app.state.kills = 0;
+            app.state.shots = 0;
+            app.state.accuracy = 100;
+            app.state.paused = 0;
+            app.state.gameover = 0;
+            $("#gameOverOverlay").style.display = "none";
             if (evt) {
                 evt.stopPropagation();
                 evt.preventDefault();
             }
             $("#gameIntroOverlay").style.display = "none";
             $(".dialog").style.display = "none";
+            
             app.nextLevel();
             app.eventloop();
             return false;
